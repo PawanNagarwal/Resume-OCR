@@ -89,6 +89,14 @@ def resume_ocr(image_path=None, client=None):
     - Work Experience (company name, job title, dates, and full description for each position)
     - Personal Projects (project name, full description)
     - Certifications (if any)
+    - Recent Job Title  
+    - Profile Summary (A concise summary generated using previous work experience and key skills, limited to 100 words)  
+
+    ### **Profile Summary Guidelines:**  
+    - **Analyze previous work experience** (including job titles and descriptions).     
+    - **Identify key skills** from the "Skills" section and **previous work experience descriptions**.     
+    - **Summarize professional expertise**, emphasizing **relevant achievements and technical strengths**.     
+    - Keep it **professional, clear, and within 100 words**.   
 
     Format the output as a valid JSON object with these fields.
     For fields where information is not available, use null.
