@@ -9,7 +9,7 @@ import tempfile
 
 # Set page title and configuration
 st.set_page_config(
-    page_title="Resume OCR",
+    page_title="CandidNexus",
     page_icon="📄",
     layout="wide"
 )
@@ -243,7 +243,7 @@ def save_uploaded_file(uploaded_file, temp_dir):
 
 # Main app function
 def main():
-    st.title("Resume OCR")
+    st.title("CandidNexus")
     st.write("Upload a resume PDF file or JPEG image.")
 
     # File uploader with expanded file types
