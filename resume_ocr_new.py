@@ -17,6 +17,71 @@ st.set_page_config(
 # Set your OpenAI API key here or use environment variable
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
+def add_experience_status(resume_data):
+    """
+    Add an 'Experience status' field to the resume data based on 'Work Experience'.
+    
+    Classification rules:
+    - If 'Work Experience' is None or an empty list, set status to 'fresher'
+    - If all job titles contain internship indicators ('intern', 'internship', etc.), set status to 'fresher'
+    - If any job title doesn't contain internship indicators, set status to 'experienced'
+    
+    Args:
+        resume_data (dict): The original resume data dictionary
+        
+    Returns:
+        dict: Resume data with added 'Experience status' field
+    """
+    # Create a copy of the input data to avoid modifying the original
+    updated_resume = resume_data.copy()
+    
+    work_exp = updated_resume.get('Work Experience')
+    
+    # Define internship indicators - words that would identify a position as an internship
+    internship_indicators = ['intern', 'internship', 'trainee']
+    
+    # Check if Work Experience is None, an empty list, or a string
+    if (work_exp is None or 
+        isinstance(work_exp, list) and len(work_exp) == 0 or
+        isinstance(work_exp, str)):
+        updated_resume['Experience status'] = 'fresher'
+    else:
+        # Initialize flag assuming all positions are internships
+        is_only_intern = True
+        
+        try:
+            for exp in work_exp:
+                # Check if exp is a dictionary before using .get()
+                if not isinstance(exp, dict):
+                    # If an entry isn't a dictionary, assume it's not an internship
+                    is_only_intern = False
+                    break
+                
+                # Get job title and handle None values
+                job_title = exp.get('job title', '') or ''
+                job_title = job_title.lower()
+                
+                # Check if any of the internship indicators are in the job title
+                is_internship_position = any(indicator in job_title for indicator in internship_indicators)
+                
+                # If any position isn't an internship, candidate is experienced
+                if not is_internship_position:
+                    is_only_intern = False
+                    break
+                    
+        except Exception as e:
+            # Handle any other unexpected errors
+            print(f"Error processing work experience: {e}")
+            is_only_intern = True  # Default to fresher if there's an error
+        
+        # Set status based on internship check
+        if is_only_intern:
+            updated_resume['Experience status'] = 'fresher'
+        else:
+            updated_resume['Experience status'] = 'experienced'
+    
+    return updated_resume
+
 # Initialize OpenAI client
 def initialize_openai():
     client = OpenAI(api_key=OPENAI_API_KEY)
@@ -135,7 +200,7 @@ def resume_ocr(image_path=None, client=None):
 
         # Extract and parse the JSON response
         parsed_response = json.loads(response.choices[0].message.content)
-        return parsed_response
+        return add_experience_status(parsed_response)
         
     except Exception as e:
         return {"error": str(e)}
