@@ -38,7 +38,7 @@ def add_experience_status(resume_data):
     work_exp = updated_resume.get('Work Experience')
     
     # Define internship indicators - words that would identify a position as an internship
-    internship_indicators = ['intern', 'internship', 'trainee']
+    internship_indicators = ['intern', 'internship']
     
     # Check if Work Experience is None, an empty list, or a string
     if (work_exp is None or 
